@@ -56,6 +56,7 @@ def collect(run_num):
 
         f = open('rssi_val_' + str(run_num) + '.pkl', 'wb')
         pickle.dump(rssi_container, f)
+        f.close()
 
         #with open('rssi_val_' + str(run_num) + '.pkl', 'wb') as f:
         #    pickle.dump(rssi_container, f)
