@@ -45,7 +45,7 @@ def collect(run_num):
         while True:
             print('>> Timestamp: ' + str(sec))
             sec += 1
-            rssi_val = get_rssi_val('shadysideinn')
+            rssi_val = get_rssi_val('kyungho_iphone_for_subt') # Changed for SSID 
             rssi_container.append(rssi_val)
             time.sleep(1)
 
