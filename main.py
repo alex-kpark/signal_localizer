@@ -53,8 +53,12 @@ def collect(run_num):
         print('Exit the Collection process!')
         print('Total RSSI data: ', str(len(rssi_container)))
         print(rssi_container)
-        with open('rssi_val_' + str(run_num) + '.pkl', 'wb') as f:
-            pickle.dump(rssi_container, f)
+
+        f = open('rssi_val_' + str(run_num) + '.pkl', 'wb')
+        pickle.dump(rssi_container, f)
+
+        #with open('rssi_val_' + str(run_num) + '.pkl', 'wb') as f:
+        #    pickle.dump(rssi_container, f)
 
 collect(1)
 
