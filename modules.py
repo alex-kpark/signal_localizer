@@ -1,7 +1,7 @@
 from access_points import get_scanner #use python library access_points
 import pickle
 import subprocess
-import pandas as pd
+#import pandas as pd
 from io import StringIO
 import requests
 import time 
