@@ -1,7 +1,8 @@
-__pychache__
+.__pychache__
 .ipynb_checkpoints
 beaconf_log.pkl
 command_log.pkl
 home_rssi_val_1.pkl
 rssi_val_1.pkl
 scan.awk
+temp.zip
