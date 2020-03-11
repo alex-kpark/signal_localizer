@@ -1,81 +1,69 @@
-from access_points import get_scanner #use python library access_points
+from modules import *
+
 import pickle
-import threading#, schedule
-from time import ctime
 import time
+import argparse
+
 
 '''
-1. Get RSS values in a particular period
+>> Set the clock and collect data
 '''
+parser = argparse.ArgumentParser(description='Using Argparser')
+parser.add_argument('--venue', required=True, help='The venue of Run')
+parser.add_argument('--run', required=True, help='The number of Run')
+parser.add_argument('--ssid_name', required=True, help='Target AP name')
+parser.add_argument('--pw', required=True, help='password for sudo code execution')
 
-def get_rssi_val(target_ap_name):
-    '''
-    >> Input
-    - target_ap_name(str): SSID pf target ap (i.e. darpa_subt_cellphone)
+args = parser.parse_args()
 
-    >> Output
-    - rssi_val: None (if there's no matching SSID) or int value of RSSI
+run = args.run
+ssid_name = args.ssid_name
+sudo_pw = args.pw
+venue = args.venue
 
-    '''
-    wifi_scanner = get_scanner() # Make an object (scanner) to scan
-    ap_results = wifi_scanner.get_access_points() #list
+print(type(run), run)
+print(type(ssid_name), ssid_name)
+print(type(sudo_pw), sudo_pw)
+print(type(venue), venue)
 
-    ap_container = {} # SSID and its quality (RSS) will be added as key, value, respectively
-    
-    for ap in ap_results:
-        ap_container[ap.ssid] = ap.quality
+def collect(run_num, ssid_name):
+    rssi_container_acp = []
+    rssi_container_netw = []
+    rssi_container_beaconf = []
 
-    #print('>> AP Info')
-    #print(ap_container)
-
-    # if there does NOT EXIST a target SSID
-    if target_ap_name not in ap_container:
-        print('Target AP is not found!')
-        return 0 #insert 0 if it does not exist
-
-    # if target SSID EXISTS
-    else:
-        print('>> Target RSSI is: ', ap_container[target_ap_name])
-        return int(ap_container[target_ap_name])
-
-def collect(run_num):
-    rssi_container = []
     sec = 0
     try:
         while True:
             print('>> Timestamp: ' + str(sec))
             sec += 1
-            rssi_val = get_rssi_val('shadysideinn')
-            rssi_container.append(rssi_val)
+            rssi_val_from_acp = rssi_with_access_point(ssid_name) #from access point
+            rssi_val_from_netw = rssi_with_netwmanager(ssid_name) #from command (nmcli - network manager)
+            rssi_val_from_beaconf = rssi_with_beaconf(ssid_name, sudo_pw) #from probing beacon frame
+
+            rssi_container_acp.append(rssi_val_from_acp)
+            rssi_container_netw.append(rssi_val_from_netw)
+            rssi_container_beaconf.append(rssi_val_from_beaconf)
+            
+            print('> Access P: ', rssi_container_acp)
+            print('> Network M: ', rssi_container_netw)
+            print('> Beacon F: ', rssi_container_beaconf)
+
             time.sleep(1)
 
     except KeyboardInterrupt:
         print('Exit the Collection process!')
-        print('Total RSSI data: ', str(len(rssi_container)))
-        print(rssi_container)
 
-        f = open('rssi_val_' + str(run_num) + '.pkl', 'wb')
-        pickle.dump(rssi_container, f)
+        total_container = {}
+        total_container['rssi_acp'] = rssi_container_acp
+        total_container['rssi_netw'] = rssi_container_netw
+        total_container['rssi_beaconf'] = rssi_container_beaconf
+
+        f = open(venue + '_rssi_val_' + str(run_num) + '.pkl', 'wb')
+        pickle.dump(total_container, f)
         f.close()
 
         #with open('rssi_val_' + str(run_num) + '.pkl', 'wb') as f:
         #    pickle.dump(rssi_container, f)
 
-collect(1)
+collect(run, ssid_name)
 
-'''
-def collect():
-    timer_func = threading.Timer(3.0, collect) #set the Timer
-    timer_func.start()
-    rssi_val = get_rssi_val('kyungho_iphone_for_subt')
-    print(ctime())
-    timer_func.cancel()
-
-collect()
-'''
-
-#get_rssi_val('shadysideinn')
-
-    
-
-    
