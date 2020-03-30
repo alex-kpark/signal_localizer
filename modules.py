@@ -1,7 +1,6 @@
 from access_points import get_scanner #use python library access_points
 import pickle
 import subprocess
-#import pandas as pd
 from io import StringIO
 import requests
 import time 
@@ -95,14 +94,18 @@ def rssi_with_beaconf(target_ap_name, sudo_pw):
 
     #wifi chip for the xavier
     try:
-        command = 'sudo iw wlan0 scan | grep "SSID: ' + target_ap_name + '$" -B6'
+        #command = 'sudo iw wlan0 scan | grep "SSID: ' + target_ap_name + '$" -B6'
+        command = 'sudo iw wlp0s20f3 scan | grep "SSID: ' + target_ap_name + '$" -B6'
     
     #wifi chip in onpremise linux setting
     except Exception as e:
+
         command = 'sudo iw wlp0s20f3 scan | grep "SSID: ' + target_ap_name + '$" -B6'
 
     result = subprocess.run([command, sudo_pw], shell=True, stdout=subprocess.PIPE).stdout.decode('utf-8')
     
+    print(result)
+
     filtered = result.replace('\t','')
     filtered = filtered.replace(' ','')
     
@@ -163,3 +166,18 @@ def rssi_with_beaconf(target_ap_name, sudo_pw):
         max_rssi = max(temp_rssi_list) # RSSI represented in dBm
         #print('Beacon Frame RSSI is: ', str(max_rssi))
         return max_rssi
+
+
+'''
+
+>> Returns..
+1) MAC Address
+2) frequency info
+3) ESSID
+4) Quality
+5) Signal Level
+
+
+'''
+def strength_with_iw(target_ap_name, sudo_pw):
+    pass
